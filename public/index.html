@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+
+<script src="https://www.gstatic.com/firebasejs/4.8.2/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyAMVPAv5aE-V0z6SzmvUgt7LtBdcadraGY",
+    authDomain: "intelltraffic.firebaseapp.com",
+    databaseURL: "https://intelltraffic.firebaseio.com",
+    projectId: "intelltraffic",
+    storageBucket: "intelltraffic.appspot.com",
+    messagingSenderId: "984831872"
+  };
+  firebase.initializeApp(config);
+</script>
+
+<body>
+
+<h2>Location</h2>
+
+<button onclick="getLocation()">Start Tracking Location</button>
+
+<p id="pos"></p>
+<p id="time"></p>
+
+<script>
+var pos = document.getElementById("pos");
+
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.watchPosition(showPosition);
+    } else { 
+        pos.innerHTML = "Geolocation is not supported by this browser.";
+    }
+}
+
+function showPosition(position) {
+    pos.innerHTML = "Latitude: " + position.coords.latitude + 
+    "<br>Longitude: " + position.coords.longitude;
+	document.getElementById("time").innerHTML = Date();
+    // time.innerHTML = "Time and Date: " + time;
+}
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
