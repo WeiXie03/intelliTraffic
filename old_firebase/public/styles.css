@@ -1,0 +1,11 @@
+h1 {
+    font-weight: lighter;
+    font-family: Roboto, Calibri, sans-serif;
+    text-align: center;
+}
+
+p {
+    font-weight: lighter;
+    font-family: Roboto, sans-serif;
+    text-indent: 40px;
+}

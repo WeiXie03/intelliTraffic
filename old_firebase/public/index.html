@@ -1,0 +1,134 @@
+<DOCTYPE html>
+<html>
+<head>
+<script src="https://www.gstatic.com/firebasejs/4.8.2/firebase.js"></script>
+<script>
+	// Initialize Firebase
+	var config = {
+		apiKey: "AIzaSyAMVPAv5aE-V0z6SzmvUgt7LtBdcadraGY",
+		authDomain: "intelltraffic.firebaseapp.com",
+		databaseURL: "https://intelltraffic.firebaseio.com",
+		projectId: "intelltraffic",
+		storageBucket: "intelltraffic.appspot.com",
+		messagingSenderId: "984831872"
+  };
+  firebase.initializeApp(config);
+</script>
+
+<style>
+table, th, td {
+	border: 1px solid black;
+	border-collapse: collapse;
+}
+th, td {
+	padding: 10px
+}
+</style>
+</head>
+
+<body>
+<h2>Location</h2>
+
+<p id="status"></p>
+
+<button onclick="getLocation()">Start Tracking Location</button>
+
+<table id="log">
+	<tr>
+		<th>Latitude</th>
+		<th>Longitude</th>
+		<th>Time</th>
+	</tr>
+</table>
+
+<script>
+function getLocation() {
+    if (navigator.geolocation) {
+		navigator.geolocation.watchPosition(updateInfo);
+	}
+	else { 
+        document.getElmentById("status") = "Geolocation is not supported by this browser.";
+    }
+}
+
+function updateInfo(position) {
+console.log(position.coords.longitude + position.coords.longitude);
+
+	var table = document.getElementById("log");
+
+	var newRow = table.insertRow();
+
+	var lat = newRow.insertCell(0);
+	var latVal = document.createTextNode(position.coords.latitude);
+	lat.appendChild(latVal);
+
+	var longi = newRow.insertCell(1);
+	var longiVal = document.createTextNode(position.coords.longitude);
+	longi.appendChild(longiVal);
+
+	var timie = newRow.insertCell(2);
+	var timeVal = document.createTextNode(Date.now());
+	timie.appendChild(timeVal);
+
+//	TODO: Add more properties to table!
+
+}
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
