@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+<h1>Admin</h1>
+
+<h4>Go to the location of the traffic intersection and click the button to set the intersection location.</h4>
+<button onclick="setServerLocation()">set server location</button>
+
+<hr>
+
+<h4>This is a log of the vehicle's location</h4>
+<p id="status"></p>
+<table id="log">
+    <tr>
+        <th>Latitude</th>
+        <th>Longitude</th>
+        <th>Time</th>
+    </tr>
+</table>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+var socket = io();
+var latestPosition;
+
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.watchPosition(updateInfo);
+    }
+    else { 
+        document.getElmentById("status") = "Geolocation is not supported by this browser.";
+    }
+}
+
+function updateInfo(position) {
+console.log(position.coords.latitude, position.coords.longitude);
+
+    var table = document.getElementById("log");
+
+    var newRow = table.insertRow();
+
+    var lat = newRow.insertCell(0);
+    var latVal = document.createTextNode(position.coords.latitude);
+    lat.appendChild(latVal);
+
+    var longi = newRow.insertCell(1);
+    var longiVal = document.createTextNode(position.coords.longitude);
+    longi.appendChild(longiVal);
+
+    var timie = newRow.insertCell(2);
+    var timeVal = document.createTextNode(Date.now());
+    timie.appendChild(timeVal);
+//  TODO: Add more properties to table!
+
+    latestPosition = {latitude:position.coords.latitude, longitude:position.coords.longitude};
+}
+
+function setServerLocation() {
+    if (navigator.geolocation) {
+        socket.emit('setServerLocation', latestPosition);
+    }
+}
+
+getLocation();
+</script>
+
+</body>
+</html>

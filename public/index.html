@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>intelliTraffic</title>
+    <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+    <div>
+        <h1>intelliTraffic</h1>
+        <p id="colour"></p>
+        <p id="till_next"></p>
+    </div>
+    <br></br>
+    <div>
+        <p id="usrLocation"></p>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io();
+        socket.on('check', function(data) {
+            state_names = ['green', 'yellow', 'red']
+
+            var cur = Date.now();
+            document.getElementById("colour").innerHTML = state_names[data.state];
+
+            var timeLeft = new Date(data.next - cur);
+            document.getElementById("till_next").innerHTML = timeLeft.getMinutes() + ':' + timeLeft.getSeconds().toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
+        });
+
+//  location tracking moved to private
+/*    function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.watchPosition(showPosition);
+        }
+    else { 
+        document.getElmentById("status") = "Geolocation is not supported by this browser.";
+        }
+    }
+
+    getLocation()
+
+    function showPosition(position) {
+       document.getElementById("usrLocation").innerHTML = 'longitude: ' + position.coords.longitude.toString() + ', latitude: ' + position.coords.latitude.toString(); 
+    } 
+*/
+    </script>
+</body>
+</html>

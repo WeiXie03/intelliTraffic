@@ -1,0 +1,13 @@
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px
+}
+
+h1, p {
+    text-align: center;
+    font-family: Ubuntu, Roboto, Calibri, sans-serif;
+}
