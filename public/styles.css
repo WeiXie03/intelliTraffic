@@ -1,10 +1,30 @@
 h1 {
-    font-family: Ubuntu, Calibri, sans-serif; 
+    font-weight: lighter;
+    font-family: Roboto, Ubuntu, Calibri, sans-serif; 
     text-align: center;
 }
 
 p {
-    font-weight: lighter;
-    font-family: Ubuntu, Calibri, sans-serif;
+    font-family: Roboto, Ubuntu, Calibri, sans-serif;
     text-align: center;
+    font-size: 24px;
+}
+
+#map {
+    height: 60%;
+    width: 60%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+
+.center {
+    margin: auto;
+    width: 60%;
+    border: 3px solid #73AD21;
+    padding: 10px;
 }

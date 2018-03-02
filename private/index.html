@@ -8,11 +8,30 @@
 <h1>Admin</h1>
 
 <h4>Go to the location of the traffic intersection and click the button to set the intersection location.</h4>
-<button onclick="setServerLocation()">set server location</button>
+<button onclick="setIntersecLoc()">set server location</button>
+<p id="locSet"></p>
+
+<br><br>
+
+<h4>Move along one of the streets of the intersection, preferably the East-most. Try to walk a few car lengths away while staying on a straight route and click the button to set one of the roads. The other roads will be mananaged automatically.</h4>
+<button onclick="setEast()">set east</button>
+<p id="eastSet"></p>
+<h5>Note: for the current version, all streets will be assumed to be straight and square to each other.</h5>
 
 <hr>
 
-<h4>This is a log of the vehicle's location</h4>
+<h4>Initial Testing: User Location to Road Association</h4>
+<button onclick="getUsrRoad()">Get User's Road</button>
+<p id="road"></p>
+
+<br></br>
+
+<button onclick="placeMarker()">Locate Intersection on Map</button>
+<div id="map"></div>
+
+<hr>
+
+<h4>Log of Vehicle Location</h4>
 <p id="status"></p>
 <table id="log">
     <tr>
@@ -23,19 +42,30 @@
 </table>
 
 <script src="/socket.io/socket.io.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBXligpy8ibnTF5bOkYAoLioVGVRtc_-7k"></script>
 <script>
 var socket = io();
 var latestPosition;
+var intersecLoc;
 
-function getLocation() {
+// Track Location
+// Initiates tracking of user location
+function trackLocation() {
     if (navigator.geolocation) {
-        navigator.geolocation.watchPosition(updateInfo);
+        options = {
+            enableHighAccuracy: true,
+            timeout: 5000,
+            maximumAge: 0
+        };
+        navigator.geolocation.watchPosition(updateInfo, watchPosError, options);
     }
     else { 
         document.getElmentById("status") = "Geolocation is not supported by this browser.";
     }
 }
-
+function watchPosError(err) {
+  console.warn('ERROR(' + err.code + '): ' + err.message);
+}
 function updateInfo(position) {
 console.log(position.coords.latitude, position.coords.longitude);
 
@@ -56,17 +86,64 @@ console.log(position.coords.latitude, position.coords.longitude);
     timie.appendChild(timeVal);
 //  TODO: Add more properties to table!
 
-    latestPosition = {latitude:position.coords.latitude, longitude:position.coords.longitude};
+    latestPosition = {lat:position.coords.latitude, lon:position.coords.longitude};
+    latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+    map.setCenter(latlng)
 }
 
-function setServerLocation() {
+// Admin commands 
+function setIntersecLoc() {
     if (navigator.geolocation) {
-        socket.emit('setServerLocation', latestPosition);
+        socket.emit('setIntersecLoc', latestPosition);
     }
 }
+socket.on('updateLoc', function(position) {
+    document.getElementById("locSet").innerHTML = 'Location Set';
+    intersecLoc = position;
+});
 
-getLocation();
+function setEast() {
+    if (navigator.geolocation) {
+        socket.emit('setEast', latestPosition);
+        console.log(latestPosition);
+    } else {
+        console.log('no navigator on setEast()');
+    }
+}
+socket.on('updateEast', function(msg) {
+    document.getElementById("eastSet").innerHTML = msg;
+});
+
+function getUsrRoad() {
+    socket.emit('getRoad', latestPosition);
+}
+socket.on('roadUpdate', function(road) {
+    console.log('road update received on client');
+    document.getElementById("road").innerHTML = road
+});
+
+
+// Map
+var map;
+function initMap() {
+    map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 20,
+        center: {lat:0, lng:0} 
+    });
+}
+
+function placeMarker() {
+    latlng = new google.maps.LatLng(latestPosition.lat, latestPosition.lon);
+    var marker = new google.maps.Marker({
+        position: latlng,
+        map: map,
+        title: 'pos'
+    });
+}
+initMap();
+trackLocation();
 </script>
+
 
 </body>
 </html>

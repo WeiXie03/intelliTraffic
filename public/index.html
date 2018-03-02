@@ -4,46 +4,117 @@
     <meta charset="UTF-8">
     <title>intelliTraffic</title>
     <link rel="stylesheet" href="styles.css"/>
+    <script type="text/javascript" src="geom.js"></script>
 </head>
 <body>
     <div>
         <h1>intelliTraffic</h1>
         <p id="colour"></p>
         <p id="till_next"></p>
+        <p id="distance"></p>
     </div>
-    <br></br>
     <div>
         <p id="usrLocation"></p>
     </div>
+    <hr>
+        <div id="map"></div>
+    </hr>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBXligpy8ibnTF5bOkYAoLioVGVRtc_-7k"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script>
         var socket = io();
-        socket.on('check', function(data) {
+        socket.on('stateUpdate', function(data) {
             state_names = ['green', 'yellow', 'red']
 
             var cur = Date.now();
             document.getElementById("colour").innerHTML = state_names[data.state];
+            document.getElementById("colour").style.background = state_names[data.state];
 
             var timeLeft = new Date(data.next - cur);
             document.getElementById("till_next").innerHTML = timeLeft.getMinutes() + ':' + timeLeft.getSeconds().toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
+
+            // socket.emit('updateUsrLoc', getLocation());
+            if(intersectLoc == null){
+                socket.emit('getIntersecLoc')
+            }
+        });
+        socket.on('updateIntersecLoc', function(position){
+            intersectLoc = position;
+            latlng = new google.maps.LatLng(position.lat, position.lon);
+            intersectMarker.setPosition(latlng);
+            updateDistance();
         });
 
-//  location tracking moved to private
-/*    function getLocation() {
-    if (navigator.geolocation) {
-        navigator.geolocation.watchPosition(showPosition);
+        var latestPosition;
+        function trackLocation() {
+            if (navigator.geolocation) {
+                options = {
+                    enableHighAccuracy: true,
+                    timeout: 5000,
+                    maximumAge: 0
+                };
+                navigator.geolocation.watchPosition(updateInfo, watchPosError, options);
+            }
+            else { 
+                document.getElementById("status") = "Geolocation is not supported by this browser.";
+            }
         }
-    else { 
-        document.getElmentById("status") = "Geolocation is not supported by this browser.";
+        function watchPosError(err) {
+          console.warn('ERROR(' + err.code + '): ' + err.message);
         }
-    }
+        function updateInfo(position) {
+            console.log(position.coords.latitude, position.coords.longitude);
+            latestPosition = {lat:position.coords.latitude, lon:position.coords.longitude};
+            latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+            map.setCenter(latlng);
+            latestLocMarker.setPosition(latlng);
+            updateDistance();
+        }
+        function updateDistance() {
+            if (intersectLoc == null) {
+                document.getElementById("distance").innerHTML = "Waiting on intersect location from server";
+            }
+            else if (latestPosition == null) {
+                document.getElementById("distance").innerHTML = "Waiting on device location from gps";
+            }
+            else {
+                lat1 = latestPosition.lat;
+                lon1 = latestPosition.lon;
+                lat2 = intersectLoc.lat;
+                lon2 = intersectLoc.lon;
+                distance = (getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2)*1000).toFixed(0);
+                document.getElementById("distance").innerHTML = `Distance to intersection: ${distance} m`;
+            }
+        }
 
-    getLocation()
+        // Map
+        var map;
+        var intersectMarker; 
+        var intersectLoc; 
+        var latestLocMarker; 
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 20,
+                center: {lat:0, lng:0} 
+            });
 
-    function showPosition(position) {
-       document.getElementById("usrLocation").innerHTML = 'longitude: ' + position.coords.longitude.toString() + ', latitude: ' + position.coords.latitude.toString(); 
-    } 
-*/
+            latlng = new google.maps.LatLng(0, 0);
+            latestLocMarker = new google.maps.Marker({
+                position: latlng,
+                map: map,
+                title: 'latestpos'
+            });
+
+            intersectMarker = new google.maps.Marker({
+                position: latlng,
+                map: map,
+                title: 'intersect'
+            });
+        }
+
+        initMap();
+        trackLocation();
+
     </script>
 </body>
 </html>

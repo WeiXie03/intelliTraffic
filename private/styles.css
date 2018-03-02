@@ -7,7 +7,26 @@ th, td {
     padding: 10px
 }
 
-h1, p {
+h1, h2, h3, h4, h5, h6, p {
     text-align: center;
-    font-family: Ubuntu, Roboto, Calibri, sans-serif;
+    font-family: Roboto, Ubuntu, Calibri, sans-serif;
+}
+
+#map {
+    height: 60%;
+    width: 60%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+
+.center {
+    margin: auto;
+    width: 60%;
+    border: 3px solid #73AD21;
+    padding: 10px;
 }
